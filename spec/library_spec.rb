@@ -4,6 +4,7 @@ RSpec.describe Library do
   before(:each) do
     @denver_public = Library.new('Denver Public Library')
     @dallas_public = Library.new('Dallas Public Library')
+    @charlotte_bronte = Author.new({ first_name: 'Charlotte', last_name: 'Bronte' })
   end
 
   describe '#initialize' do
@@ -22,22 +23,53 @@ RSpec.describe Library do
     end
   end
 
+  # describe '#books' do
+  #   it 'is an empty array if authors have not written books' do
+  #     @denver_public.add_author(@charlotte_bronte)
+
+  #     expect(@denver_public.books).to eq([])
+  #   end
+
+  #   it 'adds authors books to the books array' do
+  #     jane_eyre = @charlotte_bronte.write('Jane Eyre', 'October 16, 1847')
+  #     villette = @charlotte_bronte.write('Villette', '1853')
+
+  #     expect(@denver_public.books).to eq([jane_eyre, villette])
+  #   end
+  # end
+
   describe '#add_author' do
     it 'creates an author object and adds it to the authors array' do
-      charlotte_bronte = Author.new({ first_name: 'Charlotte', last_name: 'Bronte' })
-
-      expect(@denver_public.add_author(charlotte_bronte)).to be_an Array
-      expect(@denver_public.authors).to eq([charlotte_bronte])
+      expect(@denver_public.add_author(@charlotte_bronte)).to be_an Array
+      expect(@denver_public.authors).to eq([@charlotte_bronte])
     end
   end
 
   describe '#publication_time_frame_for' do
-    before(:each) do
-      @denver_public.add_author('Charlotte Bronte')
-    end
-  
     it 'returns a hash of start and end publication dates' do
+      @denver_public.add_author(@charlotte_bronte)
+      villette = @charlotte_bronte.write('Villette', '1853')
+      jane_eyre = @charlotte_bronte.write('Jane Eyre', 'October 16, 1847')
 
+      expect(@denver_public.publication_time_frame_for('Charlotte Bronte')).to eq({ start: '1847',
+                                                                                    end: '1853'})
     end
+
+    it 'alerts if the Library does not have the author it is searching for' do
+      expect(@denver_public.publication_time_frame_for('Charlotte Bronte')).to eq('Our library has no author by that name')
+    end
+
+    # it 'alerts if the author has no books' do
+    #   @denver_public.add_author(@charlotte_bronte)
+
+    #   expect(@denver_public.publication_time_frame_for('Charlotte Bronte')).to eq("#{name} has no books in our library")
+    # end
+
+    # it 'alerts if the author has only one book' do
+    #   @denver_public.add_author(@charlotte_bronte)
+    #   villette = @charlotte_bronte.write('Villette', '1853')
+
+    #   expect(@denver_public.publication_time_frame_for('Charlotte Bronte')).to eq("#{search_author.name} has one book in our library published on #{search_author.books.first.publication_year}")
+    # end
   end
 end
