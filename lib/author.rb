@@ -16,6 +16,8 @@ class Author
                   author_last_name: @last_name,
                   title: title,
                   publication_date: date }
-    @books << Book.new(book_hash)
+    book = Book.new(book_hash)
+    @books << book
+    book
   end
 end
