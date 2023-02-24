@@ -27,4 +27,14 @@ RSpec.describe Author do
       expect(@charlotte_bronte.name).to eq('Charlotte Bronte')
     end
   end
+
+  describe '#write' do
+    it 'creates Book objects and adds them to the authors books array' do
+      jane_eyre = @charlotte_bronte.write('Jane Eyre', 'October 16, 1847')
+      villette = @charlotte_bronte.write('Villette', '1853')
+
+      expect(@charlotte_bronte.books).to all(be_a Book)
+      expect(@charlotte_bronte.books.size).to eq(2)
+    end
+  end
 end
