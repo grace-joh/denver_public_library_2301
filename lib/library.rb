@@ -1,10 +1,12 @@
 class Library
-  attr_reader :name, :books, :authors
+  attr_reader :name, :books, :authors, :books_checked_out, :popularity_ratings
 
   def initialize(name)
     @name = name
     @books = []
     @authors = []
+    @books_checked_out = []
+    @popularity_ratings = Hash.new(0)
   end
 
   def add_author(author)
@@ -25,5 +27,19 @@ class Library
 
     search_author.books.sort_by!(&:publication_year)
     { start: search_author.books.first.publication_year, end: search_author.books.last.publication_year }
+  end
+
+  def check_out(book)
+    @books_checked_out << book
+    @popularity_ratings[book] += 1
+    @books_checked_out
+  end
+
+  def return(book)
+    @books_checked_out.delete(book)
+  end
+
+  def most_popular
+    @popularity_ratings.max_by { |_book, rating| rating }.first
   end
 end

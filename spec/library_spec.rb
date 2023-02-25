@@ -13,6 +13,7 @@ RSpec.describe Library do
       expect(@denver_public.name).to eq('Denver Public Library')
       expect(@denver_public.books).to eq([])
       expect(@denver_public.authors).to eq([])
+      expect(@denver_public.books_checked_out).to eq([])
     end
 
     it 'can initialize another Library' do
@@ -20,6 +21,7 @@ RSpec.describe Library do
       expect(@dallas_public.name).to eq('Dallas Public Library')
       expect(@dallas_public.books).to eq([])
       expect(@dallas_public.authors).to eq([])
+      expect(@dallas_public.books_checked_out).to eq([])
     end
   end
 
@@ -71,6 +73,55 @@ RSpec.describe Library do
       @charlotte_bronte.write('Villette', '1853')
 
       expect(@denver_public.publication_time_frame_for('Charlotte Bronte')).to eq('Charlotte Bronte has one book in our library published on 1853')
+    end
+  end
+
+  describe '#check_out' do
+    it 'adds a book to the checked out list and returns the list' do
+      expect(@denver_public.books_checked_out).to eq([])
+
+      @denver_public.add_author(@charlotte_bronte)
+      villette = @charlotte_bronte.write('Villette', '1853')
+      jane_eyre = @charlotte_bronte.write('Jane Eyre', 'October 16, 1847')
+
+      @denver_public.check_out(villette)
+      @denver_public.check_out(jane_eyre)
+
+      expect(@denver_public.books_checked_out).to eq([villette, jane_eyre])
+    end
+  end
+
+  describe '#return' do
+    it 'adds a book to the checked out list and returns the list' do
+      @denver_public.add_author(@charlotte_bronte)
+      villette = @charlotte_bronte.write('Villette', '1853')
+      jane_eyre = @charlotte_bronte.write('Jane Eyre', 'October 16, 1847')
+      @denver_public.check_out(villette)
+      @denver_public.check_out(jane_eyre)
+
+      expect(@denver_public.books_checked_out).to eq([villette, jane_eyre])
+
+      @denver_public.return(villette)
+
+      expect(@denver_public.books_checked_out).to eq([jane_eyre])
+    end
+  end
+
+  describe '#most popular' do
+    it 'returns the most checed out book' do
+      @denver_public.add_author(@charlotte_bronte)
+      villette = @charlotte_bronte.write('Villette', '1853')
+      jane_eyre = @charlotte_bronte.write('Jane Eyre', 'October 16, 1847')
+      @denver_public.check_out(villette)
+      @denver_public.check_out(villette)
+      @denver_public.check_out(villette)
+      @denver_public.check_out(jane_eyre)
+      @denver_public.check_out(jane_eyre)
+      @denver_public.check_out(jane_eyre)
+      @denver_public.check_out(jane_eyre)
+      @denver_public.check_out(jane_eyre)
+
+      expect(@denver_public.most_popular).to eq(jane_eyre)
     end
   end
 end
